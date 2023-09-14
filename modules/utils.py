@@ -87,7 +87,7 @@ def get_song_id(alias: str):
         return False
 
 
-def get_song_info(song_id: int, difficulty: str):
+def get_song_info(song_id: int, difficulty: str | None = None):
     musicsjson = Path(__file__).parent.parent / "database" / "musics.json"
     musicDifficultiesjson = (
         Path(__file__).parent.parent / "database" / "musicDifficulties.json"
@@ -101,6 +101,11 @@ def get_song_info(song_id: int, difficulty: str):
                 continue
             info["title"] = i["title"]
             break
+    info["musicId"] = song_id
+
+    if difficulty is None:
+        return info
+
 
     with open(musicDifficultiesjson) as f:
         result = json.load(f)
@@ -109,7 +114,6 @@ def get_song_info(song_id: int, difficulty: str):
                 info["playLevel"] = i["playLevel"]
                 info["totalNoteCount"] = i["totalNoteCount"]
 
-    info["musicId"] = song_id
     info["musicDifficulty"] = difficulty
 
     return info

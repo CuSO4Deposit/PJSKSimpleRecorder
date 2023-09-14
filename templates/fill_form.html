@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>PJSK data collector</h1>
+  <hr>
+
+    <p>id: {{ id }}</p>
+
+    <p>title: {{ title }}</p>
+
+	<hr>
+      <form action="/record/{{ id }}" method="post">
+      <select name="user" id="user">
+        <option value="0">User0</option>
+        <option value="1">User1</option>
+      </select>
+
+      <br><br>
+
+      <label for="difficulty">Difficulty: </label>
+      <select name="difficulty" id="difficulty">
+        {% for k, v in difficulties.items() %}
+        <option value={{k}}>{{k}}: {{v}}</option>
+        {% endfor %}
+        <!-- <option value="normal">normal</option> -->
+        <!-- <option value="hard">hard</option> -->
+        <!-- <option value="expert">expert</option> -->
+        <!-- <option value="master">master</option> -->
+      </select>
+      
+      <br><br>
+      
+      <label for="perfect">Perfect:</label>
+      <input type="number" id="perfect" name="perfect">
+      <br><br>
+      <label for="great">Great:</label>
+      <input type="number" id="great" name="great">
+      <br><br>
+      <label for="good">Good:</label>
+      <input type="number" id="good" name="good">
+      <br><br>
+      <label for="bad">Bad:</label>
+      <input type="number" id="bad" name="bad">
+      <br><br>
+      <label for="miss">Miss:</label>
+      <input type="number" id="miss" name="miss">
+      <br><br>
+
+      <input type="submit" value="Submit">
+    </form>
+  <hr>
+{% endblock %}

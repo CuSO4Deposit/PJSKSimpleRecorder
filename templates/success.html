@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>PJSK data collector</h1>
+  <hr>
+
+    <p>user: {{ user }}</p>
+
+    <p>id: {{ info.musicId }}</p>
+
+    <!-- <p>title: {{ title }}</p> -->
+
+    {% for k, v in data.items() %}
+    <p>{{ k }}: {{ v }}</p>
+    {% endfor %}
+
+  <hr>
+{% endblock %}

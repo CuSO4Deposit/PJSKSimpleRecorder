@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>PJSK data collector</h1>
+	<hr>
+    <form action="/alias/" method="post">
+
+      <label for="alias">Alias: </label>
+      <input type="text" id="alias" name="alias">
+      
+      <input type="submit" value="Submit">
+    </form>
+  <hr>
+{% endblock %}

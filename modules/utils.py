@@ -37,7 +37,7 @@ def insert_into_db(
                         [time] INT NOT NULL,
                         [user] TEXT NOT NULL,
                         PRIMARY KEY([time], [user])
-                    );"""
+                    )"""
                 )
     with closing(sqlite3.connect(db_path)) as con:
         with con:
@@ -127,3 +127,18 @@ def get_song_info(song_id: int, difficulty: str | None = None):
     info["musicDifficulty"] = difficulty
 
     return info
+
+
+def recent50():
+    db_path = Path(__file__).parent.parent / "database" / "pjsk.db"
+    with closing(sqlite3.connect(db_path)) as con:
+        with con:
+            cur = con.cursor()
+            cur.execute("""\
+                SELECT * FROM record
+                WHERE [user] = 0
+                ORDER BY [time] DESC
+                LIMIT 50;"""
+            )
+            result = cur.fetchall()
+    return result

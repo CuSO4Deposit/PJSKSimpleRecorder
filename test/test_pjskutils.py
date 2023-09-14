@@ -6,8 +6,8 @@ import sqlite3
 from time import time as current_time
 
 
-def test_insert():
-    args = (163, "the EmopErroR", "master", 1593, 0, 0, 0, 0, int(current_time()), "temp")
+def test_insert_and_recent():
+    args = (163, "the EmpErroR", "master", 1593, 0, 0, 0, 0, int(current_time()), "0")
     pjsk.insert_into_db(*args)
 
     db_path = Path(__file__).parent.parent / "database" / "pjsk.db"
@@ -16,6 +16,13 @@ def test_insert():
             cur = con.cursor()
             cur.execute("SELECT * FROM record;")
             assert cur.fetchone() == args
+
+    args = (163, "the EmpErroR", "master", 1593, 0, 0, 0, 0, int(current_time()) + 1, "0")
+    pjsk.insert_into_db(*args)
+    recent = pjsk.recent50()
+    assert isinstance(recent, list)
+    assert isinstance(recent[0], tuple)
+    assert recent[0][0] == 163
 
     db_path.unlink()
 
@@ -34,3 +41,5 @@ def test_get_song_info():
     assert info["totalNoteCount"] == 1593
     assert info["musicId"] == 163
     assert info["musicDifficulty"] == "master"
+
+

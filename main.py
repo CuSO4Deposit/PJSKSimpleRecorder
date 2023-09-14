@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from loguru import logger
 import modules.utils as pjsk
 from pathlib import Path
-from pydantic import BaseModel
+from time import gmtime, strftime
 from time import time as current_time
 from typing import Annotated
 
@@ -83,3 +83,14 @@ def add_record(
     }
     return templates.TemplateResponse("success.html", resp)
 
+
+@app.get("/recent")
+def recent_record(request: Request):
+    recent = pjsk.recent50()
+    cols = ["song_name", "difficulty", "perfect", "great", "good", "bad", "miss", "time"]
+    for idx, tup in enumerate(recent):
+        recent[idx] = list(tup)
+        recent[idx] = recent[idx][1:-1]
+        recent[idx][7] = strftime("%d %b %y %H:%M:%S UTC", gmtime(recent[idx][7]))
+    resp = {"cols": cols, "recent": recent, "request": request} 
+    return templates.TemplateResponse("recent.html", resp)

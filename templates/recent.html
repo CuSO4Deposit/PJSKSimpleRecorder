@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+	<h1>recent 50 records</h1>
+
+	<hr>
+
+  <div class="recent-grid-container">
+    {% for i in cols %}
+      <div style="font-size: 12px">
+      {{ i }}
+      </div>
+    {% endfor %}
+
+  {% for i in recent %}
+    {% for j in i %}
+      <div>
+        {{ j }}
+      </div>
+    {% endfor %}
+  {% endfor %}
+
+  </div>
+
+  <hr>
+
+{% endblock %}

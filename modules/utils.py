@@ -115,6 +115,7 @@ def get_song_info(song_id: int, difficulty: str | None = None):
                     difficulties[i["musicDifficulty"]] = i["playLevel"]
                 if len(difficulties) == 5:
                     break
+            info["difficulties"] = difficulties
             return info
 
         for i in result:

@@ -6,13 +6,25 @@ from pathlib import Path
 import sqlite3
 
 
-def insert_into_db(user: str, song_id: int, song_name: str, difficulty: str, perfect: int, great: int, good: int, bad: int, miss: int, time: int):
+def insert_into_db(
+    song_id: int,
+    song_name: str,
+    difficulty: str,
+    perfect: int,
+    great: int,
+    good: int,
+    bad: int,
+    miss: int,
+    time: int,
+    user: str,
+):
     db_path = Path(__file__).parent.parent / "database" / "pjsk.db"
     if not db_path.exists():
         db_path.parent.mkdir(exist_ok=True)
         with closing(sqlite3.connect(db_path)) as con:
-            with con: 
-                con.execute("""\
+            with con:
+                con.execute(
+                    """\
                     CREATE TABLE record(
                         [song_id] INT NOT NULL,
                         [song_name] TEXT NOT NULL,
@@ -29,10 +41,22 @@ def insert_into_db(user: str, song_id: int, song_name: str, difficulty: str, per
                 )
     with closing(sqlite3.connect(db_path)) as con:
         with con:
-            con.execute("""
+            con.execute(
+                """
                 INSERT INTO record ([song_id], [song_name], [difficulty], [perfect], [great], [good], [bad], [miss], [time], [user])
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", 
-                (song_id, song_name, difficulty, perfect, great, good, bad, miss, time, user,)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    song_id,
+                    song_name,
+                    difficulty,
+                    perfect,
+                    great,
+                    good,
+                    bad,
+                    miss,
+                    time,
+                    user,
+                ),
             )
 
 
@@ -65,7 +89,9 @@ def get_song_id(alias: str):
 
 def get_song_info(song_id: int, difficulty: str):
     musicsjson = Path(__file__).parent.parent / "database" / "musics.json"
-    musicDifficultiesjson = Path(__file__).parent.parent / "database" / "musicDifficulties.json"
+    musicDifficultiesjson = (
+        Path(__file__).parent.parent / "database" / "musicDifficulties.json"
+    )
     info = {}
 
     with open(musicsjson) as f:

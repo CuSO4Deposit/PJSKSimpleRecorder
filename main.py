@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from loguru import logger
 import modules.utils as pjsk
@@ -9,6 +10,7 @@ from time import time as current_time
 from typing import Annotated
 
 app = FastAPI()
+app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 templates = Jinja2Templates(Path(__file__).parent / "templates")
 
 
@@ -18,9 +20,13 @@ def mainpage(request: Request):
 
 
 @app.post("/alias/")
-def get_song(alias: Annotated[str, Form()]):
-    _, musicId, _ = pjsk.get_song_id(alias)
-    return RedirectResponse(f"/form/{musicId}/")
+def get_song(alias: Annotated[str, Form()], request: Request):
+    try:
+        _, musicId, _ = pjsk.get_song_id(alias)
+        return RedirectResponse(f"/form/{musicId}/")
+    except:
+        resp = {"message": "No record matches your query, try another name?", "request": request}
+        return templates.TemplateResponse("error.html", resp)
 
 
 @logger.catch
@@ -76,3 +82,4 @@ def add_record(
         "request": request,
     }
     return templates.TemplateResponse("success.html", resp)
+

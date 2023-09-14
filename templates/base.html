@@ -3,10 +3,22 @@
 
 <head>
     <title>PJSK data collector</title>
+    <link rel="stylesheet" href="/templates/style.css">
 </head>
 
 <body>
-  <div>
+  <div id="main">
+    <header>
+        <a href="/"><h1>PJSK-Offline-Preview</h1></a>
+        <p>Preview of a self-use project, full of バグ, never ready for production.</p>
+    </header>
+
+    <nav class="flexbox">
+        <ul>
+            <li><a href="/" class="active">Home</a>
+        </ul>
+    </nav>
+
     {% block content %}{% endblock %}
   </div>
 </body>

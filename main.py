@@ -23,7 +23,7 @@ def mainpage(request: Request):
 def get_song(alias: Annotated[str, Form()], request: Request):
     try:
         _, musicId, _ = pjsk.get_song_id(alias)
-        return RedirectResponse(f"/form/{musicId}/")
+        return RedirectResponse(f"/form/{musicId}")
     except:
         resp = {"message": "No record matches your query, try another name?", "request": request}
         return templates.TemplateResponse("error.html", resp)

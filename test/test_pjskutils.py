@@ -17,9 +17,9 @@ def test_insert_and_recent():
             cur.execute("SELECT * FROM record;")
             assert cur.fetchone() == args
 
-    args = (163, "the EmpErroR", "master", 1593, 0, 0, 0, 0, int(current_time()) + 1, "0")
+    args = (163, "the EmpErroR", "master", 1593, 0, 0, 0, 0, int(current_time()) + 1, "1")
     pjsk.insert_into_db(*args)
-    recent = pjsk.recent50()
+    recent = pjsk.recent50("1")
     assert isinstance(recent, list)
     assert isinstance(recent[0], tuple)
     assert recent[0][0] == 163

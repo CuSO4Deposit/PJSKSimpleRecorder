@@ -129,16 +129,16 @@ def get_song_info(song_id: int, difficulty: str | None = None):
     return info
 
 
-def recent50():
+def recent50(user: str) -> list[tuple]:
     db_path = Path(__file__).parent.parent / "database" / "pjsk.db"
     with closing(sqlite3.connect(db_path)) as con:
         with con:
             cur = con.cursor()
             cur.execute("""\
                 SELECT * FROM record
-                WHERE [user] = 0
+                WHERE [user] = ?
                 ORDER BY [time] DESC
-                LIMIT 50;"""
+                LIMIT 50;""", user
             )
             result = cur.fetchall()
     return result

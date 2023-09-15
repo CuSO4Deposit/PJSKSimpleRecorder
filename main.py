@@ -84,9 +84,9 @@ def add_record(
     return templates.TemplateResponse("success.html", resp)
 
 
-@app.get("/recent")
-def recent_record(request: Request):
-    recent = pjsk.recent50()
+@app.get("/recent/{user}")
+def recent_record(user: str, request: Request):
+    recent = pjsk.recent50(user)
     cols = ["song_name", "difficulty", "perfect", "great", "good", "bad", "miss", "time"]
     for idx, tup in enumerate(recent):
         recent[idx] = list(tup)

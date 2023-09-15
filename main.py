@@ -91,6 +91,6 @@ def recent_record(request: Request):
     for idx, tup in enumerate(recent):
         recent[idx] = list(tup)
         recent[idx] = recent[idx][1:-1]
-        recent[idx][7] = strftime("%d %b %y %H:%M:%S UTC", gmtime(recent[idx][7]))
+        recent[idx][7] = strftime("%d %b %Y %H:%M:%S UTC", gmtime(recent[idx][7]))
     resp = {"cols": cols, "recent": recent, "request": request} 
     return templates.TemplateResponse("recent.html", resp)

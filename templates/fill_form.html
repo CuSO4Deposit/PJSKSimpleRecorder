@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-	<h1>PJSK data collector</h1>
+  <h1>{% if default %}PJSK data updater{% else %}PJSK data collector{% endif %}</h1>
   <hr>
 
     <p>id: {{ id }}</p>
@@ -8,10 +8,10 @@
     <p>title: {{ title }}</p>
 
 	<hr>
-      <form action="/redirect/record/{{ id }}" method="post">
+      <form action={% if default %}"/redirect/record_update/{{default.origin_time}}/{{default.origin_user}}"{% else %}"/redirect/record/{{ id }}"{% endif %} method="post">
       <select name="user" id="user">
-        <option value="0">User0</option>
-        <option value="1">User1</option>
+        <option value="0" {% if default.user is defined and default.user == "0" %} selected="selected" {% endif %}>User0</option>
+        <option value="1" {% if default.user is defined and default.user == "1" %} selected="selected" {% endif %}>User1</option>
       </select>
 
       <br><br>
@@ -19,7 +19,7 @@
       <label for="difficulty">Difficulty: </label>
       <select name="difficulty" id="difficulty">
         {% for k, v in difficulties.items() %}
-        <option value={{k}}>{{k}}: {{v}}</option>
+        <option value={{k}} {% if default.difficulty is defined and default.difficulty == k %} selected="selected" {% endif %}>{{k}}: {{v}}</option>
         {% endfor %}
         <!-- <option value="normal">normal</option> -->
         <!-- <option value="hard">hard</option> -->
@@ -30,16 +30,16 @@
       <br><br>
 
       <label for="great">Great:</label>
-      <input type="number" id="great" name="great">
+      <input type="number" id="great" name="great" value={{ default.great|default() }}>
       <br><br>
       <label for="good">Good:</label>
-      <input type="number" id="good" name="good">
+      <input type="number" id="good" name="good" value={{ default.good|default() }}>
       <br><br>
       <label for="bad">Bad:</label>
-      <input type="number" id="bad" name="bad">
+      <input type="number" id="bad" name="bad" value={{ default.bad|default() }}>
       <br><br>
       <label for="miss">Miss:</label>
-      <input type="number" id="miss" name="miss">
+      <input type="number" id="miss" name="miss" value={{ default.miss|default() }}>
       <br><br>
 
       <input type="submit" value="Submit">

@@ -11,10 +11,18 @@
       </div>
     {% endfor %}
 
+
+
   {% for i in recent %}
-    {% for j in i %}
+    {% for j in i.data %}
       <div>
-        {{ j }}
+        {% if loop.index0 == 0 %}
+          <form method="get" action="/record_update/{{ i.key }}">
+            <button type="submit" class="text-btn">{{ j }}</button>
+          </form>
+        {% else %}
+          {{ j }}
+        {% endif %}
       </div>
     {% endfor %}
   {% endfor %}

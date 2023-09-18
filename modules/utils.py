@@ -134,11 +134,77 @@ def recent50(user: str) -> list[tuple]:
     with closing(sqlite3.connect(db_path)) as con:
         with con:
             cur = con.cursor()
-            cur.execute("""\
+            cur.execute(
+                """\
                 SELECT * FROM record
                 WHERE [user] = ?
                 ORDER BY [time] DESC
-                LIMIT 50;""", user
+                LIMIT 50;""",
+                user,
             )
             result = cur.fetchall()
     return result
+
+
+def dict_factory(cursor, row):
+    fields = [column[0] for column in cursor.description]
+    return {key: value for key, value in zip(fields, row)}
+
+
+def get_record(time: int, user: str):
+    db_path = Path(__file__).parent.parent / "database" / "pjsk.db"
+    with closing(sqlite3.connect(db_path)) as con:
+        with con:
+            con.row_factory = dict_factory
+            cur = con.cursor()
+            cur.execute(
+                """\
+                SELECT * FROM record
+                WHERE [time] = ? AND [user] = ?
+                    """,
+                (
+                    time,
+                    user,
+                ),
+            )
+            res = cur.fetchone()
+            return res
+
+
+def update_record(
+    difficulty: str,
+    perfect: int,
+    great: int,
+    good: int,
+    bad: int,
+    miss: int,
+    user: str,
+    origin_time: int,
+    origin_user: str,
+):
+    db_path = Path(__file__).parent.parent / "database" / "pjsk.db"
+    with closing(sqlite3.connect(db_path)) as con:
+        with con:
+            con.execute(
+                """
+                UPDATE record SET
+                [difficulty] = ?, 
+                [perfect] = ?,
+                [great] = ?,
+                [good] = ?,
+                [bad] = ?,
+                [miss] = ?,
+                [user] = ?
+                WHERE [time] = ? AND [user] = ?""",
+                (
+                    difficulty,
+                    perfect,
+                    great,
+                    good,
+                    bad,
+                    miss,
+                    user,
+                    origin_time,
+                    origin_user,
+                ),
+            )

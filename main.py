@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, status
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -19,18 +19,17 @@ def mainpage(request: Request):
     return templates.TemplateResponse("mainpage.html", {"request": request})
 
 
-@app.post("/alias/")
-def get_song(alias: Annotated[str, Form()], request: Request):
+@app.get("/redirect/alias/")
+def get_song(alias: str, request: Request):
     try:
         _, musicId, _ = pjsk.get_song_id(alias)
-        return RedirectResponse(f"/form/{musicId}")
+        return RedirectResponse(f"/form/{musicId}", status_code=status.HTTP_308_PERMANENT_REDIRECT)
     except:
         resp = {"message": "No record matches your query, try another name?", "request": request}
         return templates.TemplateResponse("error.html", resp)
 
 
-@logger.catch
-@app.post("/form/{musicId}")
+@app.get("/form/{musicId}")
 def fill_form(musicId: int, request: Request):
     info = pjsk.get_song_info(musicId)
     title = info["title"]
@@ -44,19 +43,32 @@ def fill_form(musicId: int, request: Request):
     return templates.TemplateResponse("fill_form.html", resp)
 
 
-@app.post("/record/{musicId}")
-def add_record(
+@app.post("/redirect/record/{musicId}")
+def add_record_redirect(
     musicId: int,
     difficulty: Annotated[str, Form()],
-    perfect: Annotated[int, Form()],
     great: Annotated[int, Form()],
     good: Annotated[int, Form()],
     bad: Annotated[int, Form()],
     miss: Annotated[int, Form()],
     user: Annotated[str, Form()],
+):
+    return RedirectResponse(f"/record/{user}/{musicId}/{difficulty}/{great}/{good}/{bad}/{miss}", status_code=status.HTTP_308_PERMANENT_REDIRECT)
+
+
+@app.post("/record/{userId}/{musicId}/{difficulty}/{great}/{good}/{bad}/{miss}")
+def add_record(
+    musicId: int,
+    difficulty: str,
+    great: int,
+    good: int,
+    bad: int,
+    miss: int,
+    userId: str,
     request: Request,
 ):
     info = pjsk.get_song_info(musicId, difficulty)
+    perfect = info["totalNoteCount"] - great - good - bad - miss
     pjsk.insert_into_db(
         musicId,
         info["title"],
@@ -67,11 +79,11 @@ def add_record(
         bad,
         miss,
         int(current_time()),
-        user,
+        userId,
     )
     resp = {
         "info": info,
-        "user": user,
+        "user": userId,
         "data": {
             "perfect": perfect,
             "great": great,

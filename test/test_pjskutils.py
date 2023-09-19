@@ -2,6 +2,7 @@ from modules import utils as pjsk
 
 from contextlib import closing
 from pathlib import Path
+import pytest
 import sqlite3
 from time import time as current_time
 
@@ -17,7 +18,18 @@ def test_insert_and_recent():
             cur.execute("SELECT * FROM record;")
             assert cur.fetchone() == args
 
-    args = (163, "the EmpErroR", "master", 1593, 0, 0, 0, 0, int(current_time()) + 1, "1")
+    args = (
+        163,
+        "the EmpErroR",
+        "master",
+        1593,
+        0,
+        0,
+        0,
+        0,
+        int(current_time()) + 1,
+        "1",
+    )
     pjsk.insert_into_db(*args)
     recent = pjsk.recent50("1")
     assert isinstance(recent, list)
@@ -43,3 +55,9 @@ def test_get_song_info():
     assert info["musicDifficulty"] == "master"
 
 
+@pytest.mark.asyncio
+async def test_stream_file(tmp_path: Path):
+    url = "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/main/musics.json"
+    file_path = tmp_path / "musics.json"
+    await pjsk.stream_binary(url, file_path)
+    assert tmp_path.stat().st_size

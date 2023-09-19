@@ -1,3 +1,5 @@
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, Form, Request, status
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -11,6 +13,25 @@ from typing import Annotated
 app = FastAPI()
 app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 templates = Jinja2Templates(Path(__file__).parent / "templates")
+
+
+async def download_master_db():
+    url_base = (
+        "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/main/"
+    )
+    file_name = ["musics.json", "musicDifficulties.json"]
+    db_path = Path(__file__).parent / "database"
+    for i in file_name:
+        file_path = db_path / i
+        await pjsk.stream_binary(url=url_base + i, path=file_path)
+
+
+@app.on_event("startup")
+async def startup():
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(
+        download_master_db, CronTrigger.from_crontab("0 1 * * *"), jitter=120
+    )
 
 
 @app.get("/")

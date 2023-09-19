@@ -5,7 +5,7 @@ a project for temporary use
 ## TODO
 
 - [ ] asset updater (not found in apk. download on-demand?)
-- [ ] music.json updater (apscheduler?)
+- [x] music.json updater
 - [ ] add button to delete record
 - [ ] highlight current page in nav
 - [x] add api and interface to update record

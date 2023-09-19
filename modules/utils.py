@@ -208,3 +208,13 @@ def update_record(
                     origin_user,
                 ),
             )
+
+
+async def stream_binary(url: str, path: Path):
+    async with httpx.AsyncClient(timeout=10.0).stream("GET", url) as resp:
+        if resp.status_code != 200:
+            logger.warning(f"{resp.status_code} when GET {url}")
+            return None
+        with path.open("wb") as f:
+            async for byte in resp.aiter_bytes():
+                f.write(byte)

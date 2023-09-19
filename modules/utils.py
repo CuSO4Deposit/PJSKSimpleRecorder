@@ -94,6 +94,7 @@ def get_song_info(song_id: int, difficulty: str | None = None):
     musicDifficultiesjson = (
         Path(__file__).parent.parent / "database" / "musicDifficulties.json"
     )
+    musicRatingsjson = Path(__file__).parent.parent / "database" / "musicRatings.json"
     info = {}
 
     with open(musicsjson) as f:
@@ -123,6 +124,14 @@ def get_song_info(song_id: int, difficulty: str | None = None):
                 info["playLevel"] = i["playLevel"]
                 info["totalNoteCount"] = i["totalNoteCount"]
                 break
+
+    with open(musicRatingsjson) as f:
+        result = json.load(f)
+        for i in result:
+            if i["musicId"] == song_id and i["musicDifficulty"] == difficulty:
+                if "fullComboAdjust" in i and "fullPerfectAdjust" in i:
+                    info["fullComboAdjust"] = i["fullComboAdjust"]
+                    info["fullPerfectAdjust"] = i["fullPerfectAdjust"]
 
     info["musicDifficulty"] = difficulty
 
@@ -218,3 +227,27 @@ async def stream_binary(url: str, path: Path):
         with path.open("wb") as f:
             async for byte in resp.aiter_bytes():
                 f.write(byte)
+
+
+def get_acc(song_id: int, difficulty: str, great: int, good: int, bad: int, miss: int):
+    info = get_song_info(song_id, difficulty)
+    note_count = info["totalNoteCount"]
+    return 1 - (great + good * 2 + bad * 3 + miss * 3) / (note_count * 3)
+
+
+def get_play_rating(
+    song_id: int, difficulty: str, great: int, good: int, bad: int, miss: int
+):
+    info = get_song_info(song_id, difficulty)
+    fc_flag = (good == 0) and (bad == 0) and (miss == 0)
+    ap_flag = (great == 0) and fc_flag
+    exist_flag = ("fullComboAdjust" in info) and ("fullPerfectAdjust" in info)
+    rating = info["playLevel"]
+    if not exist_flag:
+        pass
+    else:
+        if ap_flag:
+            rating += info["fullPerfectAdjust"]
+        else:
+            rating += min(info["fullPerfectAdjust"], info["fullComboAdjust"])
+    return rating * get_acc(song_id, difficulty, great, good, bad, miss)

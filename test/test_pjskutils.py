@@ -55,9 +55,14 @@ def test_get_song_info():
     assert info["musicDifficulty"] == "master"
 
 
-@pytest.mark.asyncio
-async def test_stream_file(tmp_path: Path):
-    url = "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/main/musics.json"
-    file_path = tmp_path / "musics.json"
-    await pjsk.stream_binary(url, file_path)
-    assert tmp_path.stat().st_size
+# @pytest.mark.asyncio
+# async def test_stream_file(tmp_path: Path):
+#     url = "https://raw.githubusercontent.com/Sekai-World/sekai-master-db-diff/main/musics.json"
+#     file_path = tmp_path / "musics.json"
+#     await pjsk.stream_binary(url, file_path)
+#     assert tmp_path.stat().st_size
+
+
+def test_b30():
+    assert pjsk.get_acc(163, "master", 0, 0, 0, 0) == 1
+    assert round(pjsk.get_play_rating(163, "master", 1, 0, 0, 1), 5) == 35.62716

@@ -24,6 +24,10 @@ async def download_master_db():
     for i in file_name:
         file_path = db_path / i
         await pjsk.stream_binary(url=url_base + i, path=file_path)
+    await pjsk.stream_binary(
+        url="https://raw.githubusercontent.com/watagashi-uni/Unibot/main/masterdata/realtime/musicDifficulties.json",
+        path=db_path / "musicRatings.json",
+    )
 
 
 @app.on_event("startup")

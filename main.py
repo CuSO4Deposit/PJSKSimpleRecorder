@@ -36,6 +36,7 @@ async def startup():
     scheduler.add_job(
         download_master_db, CronTrigger.from_crontab("0 1 * * *"), jitter=120
     )
+    scheduler.start()
 
 
 @app.get("/")
